@@ -1,6 +1,7 @@
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 import { Database } from "./schema";
+import { cache } from "react";
 
 export async function createClient() {
   const cookieStore = await cookies();
@@ -28,3 +29,8 @@ export async function createClient() {
     }
   );
 }
+
+export const getUser = cache(async () => {
+  const supabase = await createClient();
+  return await supabase.auth.getUser();
+});

@@ -1,15 +1,14 @@
 import "./page.css";
-import { createClient } from "@/lib/supabase/server";
+import { getUser } from "@/lib/supabase/server";
 import AuthForm from "@/components/AuthForm";
 import Header from "@/components/Header";
 import PostList from "@/components/PostList";
 
 export default async function Page() {
-  const supabase = await createClient();
   const {
     data: { user },
     error,
-  } = await supabase.auth.getUser();
+  } = await getUser();
   if (error || !user) {
     return <AuthForm />;
   }

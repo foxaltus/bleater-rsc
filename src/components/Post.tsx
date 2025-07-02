@@ -1,6 +1,6 @@
 import { fetchLikes, type PostType, type ProfileType } from "@/lib/queries";
 import LikeButton from "./LikeButton";
-import { createClient } from "@/lib/supabase/server";
+import { getUser } from "@/lib/supabase/server";
 
 interface PostProps {
   post: PostType;
@@ -8,16 +8,14 @@ interface PostProps {
 }
 
 export default async function Post({ post, profile }: PostProps) {
-  const supabase = await createClient();
   const {
-    data: { session },
-  } = await supabase.auth.getSession();
+    data: { user },
+  } = await getUser();
 
   // Fetch likes
   const likesPromise = fetchLikes(post.id).then((likes) => ({
     count: likes.data?.length ?? 0,
-    liked:
-      likes.data?.some((like) => like.user_id === session?.user.id) ?? false,
+    liked: likes.data?.some((like) => like.user_id === user?.id) ?? false,
   }));
 
   return (
