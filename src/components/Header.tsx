@@ -1,28 +1,15 @@
 import Image from "next/image";
 import SignOut from "./SignOut";
 import type { User } from "@supabase/supabase-js";
+import { getUserName } from "@/lib/utils";
 
 export interface HeaderProps {
-  user?: User;
+  user: User;
 }
-
-// Check for all possible username keys in metadata
-const getUserName = (user?: User) => {
-  if (!user?.user_metadata) return user?.email?.split("@")[0] ?? "User";
-
-  // Try different possible keys for username
-  return (
-    user.user_metadata.user_name ??
-    user.user_metadata.username ??
-    user.user_metadata.name ??
-    user?.email?.split("@")[0] ??
-    "User"
-  );
-};
 
 export default function Header({ user }: HeaderProps) {
   const username = getUserName(user);
-  const avatar = user?.user_metadata?.avatar_url;
+  const avatar = user.user_metadata?.avatar_url;
 
   return (
     <header className="twitter-header">
