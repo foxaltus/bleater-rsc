@@ -46,7 +46,7 @@ export default async function Post({ post, profile }: PostProps) {
         <div className="post-message">{post.message}</div>
         <div className="post-actions">
           <div className="action-container">
-            <LikeButton likesPromise={likesPromise} />
+            <LikeButton postId={post.id} likesPromise={likesPromise} />
           </div>
         </div>
       </div>
