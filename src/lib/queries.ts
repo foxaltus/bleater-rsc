@@ -66,3 +66,23 @@ export const toggleLike = async ({
 
   revalidatePath("/"); // Revalidate the path to update the UI
 };
+
+// Create post
+export const createPost = async (formData: FormData) => {
+  const {
+    data: { user },
+  } = await getUser();
+  if (!user) throw new Error("User not authenticated");
+
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from("post")
+    .insert([
+      { message: formData.get("message")?.toString() ?? "", user_id: user.id },
+    ])
+    .select();
+
+  if (error) throw error;
+
+  revalidatePath("/"); // Revalidate the path to update the UI
+};

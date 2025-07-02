@@ -3,6 +3,7 @@ import { getUser } from "@/lib/supabase/server";
 import AuthForm from "@/components/AuthForm";
 import Header from "@/components/Header";
 import PostList from "@/components/PostList";
+import PostCreation from "@/components/PostCreation";
 
 export default async function Page() {
   const {
@@ -17,6 +18,7 @@ export default async function Page() {
     <div className="dashboard">
       <Header user={user} />
       <main>
+        <PostCreation user={user} />
         <div className="posts-container">
           <h2>Recent Bleats</h2>
           <PostList />
