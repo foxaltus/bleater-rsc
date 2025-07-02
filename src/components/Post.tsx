@@ -1,11 +1,25 @@
-import { type PostType, type ProfileType } from "@/lib/queries";
+import { fetchLikes, type PostType, type ProfileType } from "@/lib/queries";
+import LikeButton from "./LikeButton";
+import { createClient } from "@/lib/supabase/server";
 
 interface PostProps {
   post: PostType;
   profile?: ProfileType;
 }
 
-export default function Post({ post, profile }: PostProps) {
+export default async function Post({ post, profile }: PostProps) {
+  const supabase = await createClient();
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+
+  // Fetch likes
+  const likesPromise = fetchLikes(post.id).then((likes) => ({
+    count: likes.data?.length ?? 0,
+    liked:
+      likes.data?.some((like) => like.user_id === session?.user.id) ?? false,
+  }));
+
   return (
     <div className={`post-item`}>
       <div className="post-avatar">
@@ -32,6 +46,11 @@ export default function Post({ post, profile }: PostProps) {
           </span>
         </div>
         <div className="post-message">{post.message}</div>
+        <div className="post-actions">
+          <div className="action-container">
+            <LikeButton likesPromise={likesPromise} />
+          </div>
+        </div>
       </div>
     </div>
   );

@@ -21,3 +21,9 @@ export const fetchProfiles = async (userIds: string[]) => {
   const supabase = await createClient();
   return await supabase.from("profiles").select("*").in("id", userIds);
 };
+
+// Fetch likes
+export const fetchLikes = async (postId: string) => {
+  const supabase = await createClient();
+  return await supabase.from("likes").select("*").eq("post_id", postId);
+};
