@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, use } from "react";
+import { Suspense, use, useOptimistic, useTransition } from "react";
 import HeartIcon from "./HeartIcon";
 import { ErrorBoundary } from "react-error-boundary";
 import { toggleLike } from "@/lib/queries";
@@ -20,13 +20,32 @@ export default function LikeButton({ postId, likesPromise }: LikeButtonProps) {
   );
 }
 function LikeButtonImpl({ postId, likesPromise }: LikeButtonProps) {
-  const { liked, count } = use(likesPromise);
+  const likes = use(likesPromise);
+  const [optmimisticLikes, toggleOptimisticLikes] = useOptimistic(
+    likes,
+    (prev, liked: boolean) => ({
+      count: liked ? Math.max(prev.count - 1, 0) : prev.count + 1,
+      liked: !prev.liked,
+    })
+  );
+  const [isPending, startTransition] = useTransition();
+
+  const { count, liked } = optmimisticLikes;
+
+  const onClick = async () => {
+    startTransition(async () => {
+      toggleOptimisticLikes(liked);
+      await toggleLike({ postId, liked });
+    });
+  };
 
   return (
     <button
-      className={`like-button ${liked ? "liked" : ""}`}
+      className={`like-button ${liked ? "liked" : ""} ${
+        isPending ? "liking" : ""
+      }`}
       aria-label={liked ? "Unlike post" : "Like post"}
-      onClick={() => toggleLike({ postId, liked })}
+      onClick={onClick}
     >
       <HeartIcon filled={liked} />
       {count > 0 && <span className="like-count">{count}</span>}
