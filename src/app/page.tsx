@@ -1,18 +1,17 @@
 import "./page.css";
 import { getUser } from "@/lib/supabase/server";
-import AuthForm from "@/components/AuthForm";
 import Header from "@/components/Header";
 import PostList from "@/components/PostList";
 import PostCreation from "@/components/PostCreation";
+import { redirect } from "next/navigation";
 
 export default async function Page() {
   const {
     data: { user },
     error,
   } = await getUser();
-  if (error || !user) {
-    return <AuthForm />;
-  }
+  if (error) console.error("Error fetching user:", error);
+  if (error || !user) redirect("/auth/login?autoLogin=off");
 
   return (
     <div className="dashboard">

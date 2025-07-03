@@ -1,21 +1,13 @@
 "use client";
 
 import { createClient } from "@/lib/supabase/client";
-import { useRouter, usePathname, useSearchParams } from "next/navigation";
+import { redirect } from "next/navigation";
 
 export default function SignOut() {
-  const router = useRouter();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
-
   const signOut = async () => {
-    // Set auto-login parameter to off to prevent automatic login
-    const params = new URLSearchParams(searchParams.toString());
-    params.set("autoLogin", "off");
-    router.replace(`${pathname}?${params.toString()}`);
-
     const supabase = createClient();
-    supabase.auth.signOut();
+    await supabase.auth.signOut();
+    redirect("/auth/login?autoLogin=off");
   };
 
   return (

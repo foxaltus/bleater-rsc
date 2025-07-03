@@ -3,11 +3,11 @@
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
 import { getURL } from "@/lib/utils";
-import "./AuthForm.css";
+import "./page.css";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { experimental_useEffectEvent, useEffect } from "react";
 
-export default function AuthForm() {
+export default function LoginPage() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
