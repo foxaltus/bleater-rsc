@@ -1,7 +1,7 @@
 "use client";
 
 import { createPost } from "@/lib/queries";
-import { useState } from "react";
+import { useState, useTransition } from "react";
 
 // Utility function to detect touch devices
 function isTouchDevice() {
@@ -13,10 +13,17 @@ function isTouchDevice() {
 
 export default function PostForm() {
   const [postText, setPostText] = useState("");
+  const [isPending, startTransition] = useTransition();
 
   async function formAction(formData: FormData) {
-    setPostText(""); // Clear the input after submission
-    await createPost(formData);
+    // Prevent submission if message is empty
+    if (!formData.get("message")?.toString().trim()) return;
+    // Create the post and track the pending state
+    startTransition(async () => {
+      await createPost(formData);
+    });
+    // Clear the input after submission
+    setPostText("");
   }
 
   return (
@@ -43,6 +50,7 @@ export default function PostForm() {
           }
         }}
         maxLength={280}
+        disabled={isPending}
       ></textarea>
       <div className="post-actions">
         <span className="char-count">
@@ -53,7 +61,7 @@ export default function PostForm() {
             </span>
           )}
         </span>
-        <button type="submit" disabled={!postText.trim()}>
+        <button type="submit" disabled={!postText.trim() || isPending}>
           Post
         </button>
       </div>
