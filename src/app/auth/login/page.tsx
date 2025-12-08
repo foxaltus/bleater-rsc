@@ -5,7 +5,7 @@ import { createClient } from "@/lib/supabase/client";
 import { getURL } from "@/lib/utils";
 import "./page.css";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { experimental_useEffectEvent, Suspense, useEffect } from "react";
+import { useEffectEvent, Suspense, useEffect } from "react";
 
 export default function LoginPage() {
   return (
@@ -35,7 +35,7 @@ function LoginPageImpl() {
     });
   }
 
-  const onAutoLogin = experimental_useEffectEvent(signInWithGitHub);
+  const onAutoLogin = useEffectEvent(signInWithGitHub);
   useEffect(() => {
     if (autoLogin) onAutoLogin();
     // Effect events should be omitted from the exhaustive-deps rule
